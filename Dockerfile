@@ -1,4 +1,4 @@
-ARG MAJOR_PHP_VERSION=8.2.7
+ARG MAJOR_PHP_VERSION=8.2.10
 
 FROM php:${MAJOR_PHP_VERSION}-fpm-bookworm
 
@@ -63,11 +63,6 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
     apt-get update && \
     ACCEPT_EULA=Y apt-get install msodbcsql17 unixodbc-dev -y && \
     echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list
-
-# install nodejs 18
-RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
-RUN apt-get install -y nodejs
-RUN npm install yarn -g
 
 # install pecl drivers
 RUN pecl install sqlsrv-5.10.0 && \
