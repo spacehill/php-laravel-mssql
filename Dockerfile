@@ -5,13 +5,13 @@ FROM php:${MAJOR_PHP_VERSION}-fpm-bookworm
 ARG MAJOR_PHP_VERSION
 ARG NGINX_VERSION=1.20~buster
 
+ENV TZ Australia/Sydney
+ENV DEBIAN_FRONTEND noninteractive
+ENV NODE_MAJOR 18
+
 LABEL maintainer="Tobias Hillen (tobias.hillen@spacehill.de)"
 
-ENV TZ Australia/Sydney
-
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
-ENV DEBIAN_FRONTEND noninteractive
 
 RUN set -eux; \
     apt-get update; \
@@ -21,6 +21,17 @@ RUN set -eux; \
     python3-pip python3-setuptools git default-mysql-client libmemcached-dev libz-dev libpq-dev libjpeg-dev libpng-dev libfreetype6-dev \
     libssl-dev libwebp-dev libmcrypt-dev libonig-dev libxrender1 libxext6 librdkafka-dev openssh-server sudo nginx dialog && \
     wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
+
+# install nodejs 18
+RUN mkdir -p /etc/apt/keyrings
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+
+RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+
+RUN apt-get update \
+    && apt-get install -y nodejs
+RUN npm install npm@latest -g \
+    && npm install -g yarn
 
 RUN set -eux; \
     # install php pdo_mysql extention
@@ -65,8 +76,8 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
     echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list
 
 # install pecl drivers
-RUN pecl install sqlsrv-5.10.0 && \
-    pecl install pdo_sqlsrv-5.10.0 && \
+RUN pecl install sqlsrv-5.11.1 && \
+    pecl install pdo_sqlsrv-5.11.1 && \
     docker-php-ext-enable sqlsrv && \
     docker-php-ext-enable pdo_sqlsrv
 
@@ -77,11 +88,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 ARG LOCALE=POSIX
 ENV LC_ALL ${LOCALE}
 
-# install nodejs 18
-RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
-RUN apt-get install -y nodejs
-RUN npm install npm@latest -g 
-RUN npm install yarn -g
 
 # clean up
 RUN apt-get autoremove -y && \
