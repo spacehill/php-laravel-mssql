@@ -100,7 +100,7 @@ RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
 COPY ini/opcache.ini /usr/local/etc/php/conf.d
 
 # the base image adds a bunch of pools that we dont want
-RUN rm /usr/local/etc/php-fpm.d/*.conf
+RUN rm -f /usr/local/etc/php-fpm.d/*.conf
 
 # copy over our laravel fpm pool config
 COPY ini/laravel.pool.conf /usr/local/etc/php-fpm.d/
