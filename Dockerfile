@@ -1,9 +1,8 @@
-ARG MAJOR_PHP_VERSION=8.2
+ARG MAJOR_PHP_VERSION=8.3.1
 
 FROM php:${MAJOR_PHP_VERSION}-fpm-bookworm
 
 ARG MAJOR_PHP_VERSION
-ARG NGINX_VERSION=1.20~buster
 
 ENV TZ Australia/Sydney
 ENV DEBIAN_FRONTEND noninteractive
@@ -118,7 +117,7 @@ WORKDIR /var/www
 
 RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache && \
     chown -R www-data:www-data storage bootstrap/cache && \
-    chmod -R 744 storage
+    chmod -R 7 storage
 
 RUN mkdir /var/run/php
 RUN chown www-data:www-data /var/run/php storage bootstrap/cache
