@@ -17,11 +17,16 @@ RUN set -eux; \
     apt-get upgrade -y; \
     apt-get install -y --no-install-recommends \
     curl gcc make autoconf libc-dev zlib1g-dev libicu-dev g++ pkg-config gnupg2 dirmngr wget apt-transport-https lsb-release ca-certificates \
-    python3-pip python3-setuptools git default-mysql-client libmemcached-dev libz-dev libpq-dev libjpeg-dev libpng-dev libfreetype6-dev \
+    python3 git default-mysql-client libmemcached-dev libz-dev libpq-dev libjpeg-dev libpng-dev libfreetype6-dev \
     libssl-dev libwebp-dev libmcrypt-dev libonig-dev libxrender1 libxext6 librdkafka-dev openssh-server sudo nginx dialog && \
     wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
 
-# install nodejs 18
+# upgrade setuptools to fix  CVE-2024-6345
+RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py --break-system-packages  && rm get-pip.py
+RUN python3 -m pip install --upgrade pip setuptools --break-system-packages
+
+
+# install nodejs 22
 RUN curl -fsSL https://deb.nodesource.com/setup_$NODE_MAJOR.x | bash - && apt-get install -y nodejs
 
 RUN npm install npm@latest -g \
