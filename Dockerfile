@@ -1,10 +1,10 @@
-ARG MAJOR_PHP_VERSION=8.2.7
+ARG MAJOR_PHP_VERSION=8.3.11
 
 FROM php:${MAJOR_PHP_VERSION}-fpm-bookworm
 
 ARG MAJOR_PHP_VERSION
 ARG NGINX_VERSION=1.20~buster
-ENV NODE_MAJOR 18
+ENV NODE_MAJOR 22
 
 LABEL maintainer="Tobias Hillen (tobias.hillen@spacehill.de)"
 
